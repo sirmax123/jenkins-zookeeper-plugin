@@ -1,4 +1,4 @@
-package io.jenkins.plugins.zookeper;
+package io.jenkins.plugins.zookeeper;
 
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 

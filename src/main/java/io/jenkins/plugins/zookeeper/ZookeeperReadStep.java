@@ -1,10 +1,12 @@
-package  io.jenkins.plugins.zookeper;
+package  io.jenkins.plugins.zookeeper;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import hudson.Extension;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+
 import org.jenkinsci.plugins.workflow.steps.AbstractStepDescriptorImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractStepImpl;
 import org.jenkinsci.plugins.workflow.steps.AbstractSynchronousNonBlockingStepExecution;
@@ -12,20 +14,18 @@ import org.jenkinsci.plugins.workflow.steps.StepContextParameter;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
-import javax.inject.Inject;
 
 
-public class ZookeeperWriteStep extends AbstractStepImpl {
+
+public class ZookeeperReadStep extends AbstractStepImpl {
 
     private static final long serialVersionUID = 1;
 
     private String zookeeperNodes;
     private String znode;
-    private String znodeData;
-
 
     @DataBoundConstructor
-    public ZookeeperWriteStep(String zookeeperNodes) {
+    public ZookeeperReadStep(String zookeeperNodes) {
         this.zookeeperNodes = zookeeperNodes;
     }
 
@@ -34,50 +34,48 @@ public class ZookeeperWriteStep extends AbstractStepImpl {
         this.znode = znode;
     }
 
-    @DataBoundSetter
-    public void setZnodeData(String znodeData) {
-        this.znodeData = znodeData;
-    }
-
     public String getZookeeperNodes() { return zookeeperNodes; }
 
-    public String getZnode() { return znode; }
-
-    public String getZnodeData() { return znodeData; }
-
-    public ResponseContentSupplier writeZnode(Run<?,?> run, TaskListener listener) throws Exception {
-        return new ResponseContentSupplier(zookeeperNodes, znode, znodeData);
+    public String getZnode() {
+        return znode;
     }
 
+    public ResponseContentSupplier readZnode(Run<?,?> run, TaskListener listener) throws Exception {
+        return new ResponseContentSupplier(zookeeperNodes, znode);
+    }
+
+
     @Override
-    public ZookeeperWriteStep.DescriptorImpl getDescriptor() {
-        return (ZookeeperWriteStep.DescriptorImpl) super.getDescriptor();
+    public ZookeeperReadStep.DescriptorImpl getDescriptor() {
+        return (ZookeeperReadStep.DescriptorImpl) super.getDescriptor();
     }
 
     @Extension
     public static final class DescriptorImpl extends AbstractStepDescriptorImpl {
+        public static final String action = "read";
+
         public DescriptorImpl() {
             super(Execution.class);
         }
 
         @Override
         public String getFunctionName() {
-            return "zookeperWrite";
+            return "zookeeperRead";
         }
 
         @Override
         public String getDisplayName() {
-            return "Write znode";
+            return "Read znode";
         }
 
     }
 
-    public static final class Execution extends AbstractSynchronousNonBlockingStepExecution<io.jenkins.plugins.zookeper.ResponseContentSupplier> {
+    public static final class Execution extends AbstractSynchronousNonBlockingStepExecution<io.jenkins.plugins.zookeeper.ResponseContentSupplier> {
 
         private static final long serialVersionUID = 1;
 
         @Inject
-        private transient ZookeeperWriteStep step;
+        private transient ZookeeperReadStep step;
 
         @StepContextParameter
         private transient Run run;
@@ -86,8 +84,8 @@ public class ZookeeperWriteStep extends AbstractStepImpl {
         private transient TaskListener listener;
 
         @Override
-        protected io.jenkins.plugins.zookeper.ResponseContentSupplier run() throws Exception {
-            return step.writeZnode(run, listener);
+        protected io.jenkins.plugins.zookeeper.ResponseContentSupplier run() throws Exception {
+            return step.readZnode(run, listener);
         }
     }
 

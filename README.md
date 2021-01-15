@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Simple zookeper client.
+Simple zookeeper client.
 Now implemented only 2 options: read zNode data and write data to zNode.
 
 ## Getting started
@@ -27,7 +27,7 @@ def date
 def newZnodeData = "SomeNewData "
 def preCreatedZnode = "/MyFirstZnode"
 def newZnode
-def dataFromZookeper
+def dataFromZookeeper
 def stageName
 
 node() {
@@ -42,41 +42,41 @@ node() {
     stageName = "Read data from existing node"
     stage(stageName) {
         println(stageName)
-        dataFromZookeper = zookeperRead "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": preCreatedZnode
-        println("Got Data: " + dataFromZookeper)
+        dataFromzookeeper = zookeeperRead "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": preCreatedZnode
+        println("Got Data: " + dataFromzookeeper)
         println("Write data to the zNode")
-        zookeperWrite "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": preCreatedZnode, "znodeData": newZnodeData
+        zookeeperWrite "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": preCreatedZnode, "znodeData": newZnodeData
     }
 
     stageName = "Read data written to the zNode"
     stage(stageName) {
         println(stageName)
-        dataFromZookeper = zookeperRead "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": preCreatedZnode
-        dataFromZookeper = dataFromZookeper.toString().trim()
-        println("Got data: " + dataFromZookeper + " Expected data is: " + newZnodeData)
+        dataFromzookeeper = zookeeperRead "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": preCreatedZnode
+        dataFromzookeeper = dataFromzookeeper.toString().trim()
+        println("Got data: " + dataFromzookeeper + " Expected data is: " + newZnodeData)
 
-        if (newZnodeData.toString().trim() != dataFromZookeper.trim()) {
-            println("ERROR " + newZnodeData + " != " + dataFromZookeper)
+        if (newZnodeData.toString().trim() != dataFromzookeeper.trim()) {
+            println("ERROR " + newZnodeData + " != " + dataFromzookeeper)
         } else {
-            println("Got Expected Data: " + newZnodeData + " == " + dataFromZookeper)
+            println("Got Expected Data: " + newZnodeData + " == " + dataFromzookeeper)
         }
     }
     stageName = "Create new znode " + newZnode
     stage(stageName) {
         println(stageName)
-        zookeperWrite "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": newZnode, "znodeData": newZnodeData
+        zookepeerWrite "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": newZnode, "znodeData": newZnodeData
     }
     stageName = "Read from new znode " + newZnode
     stage(stageName) {
         println(stageName)
         println(newZnode)
-        dataFromZookeper = zookeperRead "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": newZnode
-        dataFromZookeper = dataFromZookeper.toString().trim()
+        dataFromzookeeper = zookeeperRead "zookeeperNodes": ZOOKEEPER_HOSTS, "znode": newZnode
+        dataFromzookeeper = dataFromzookeeper.toString().trim()
 
-        if (newZnodeData.toString().trim() != dataFromZookeper.trim()) {
-            println("ERROR " + newZnodeData + " != " + dataFromZookeper)
+        if (newZnodeData.toString().trim() != dataFromzookeeper.trim()) {
+            println("ERROR " + newZnodeData + " != " + dataFromzookeeper)
         } else {
-            println("Got Expected Data" + newZnodeData + " == " + dataFromZookeper)
+            println("Got Expected Data" + newZnodeData + " == " + dataFromzookeeper)
         }
     }
 }
